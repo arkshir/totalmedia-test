@@ -1,0 +1,51 @@
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    user: root
+    # ports:
+    #   - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+    restart: always
+    volumes:
+      - "db-data:/var/opt/mssql/data"
+      - "db-logs:/var/opt/mssql/log"
+      - "db-secrets:/var/opt/mssql/secrets"
+    networks:
+      - backend
+  webapi:
+    build:
+      context: .
+      dockerfile: ./TotalMedia.WebAPI/Dockerfile
+    ports:
+      - "5000:80"
+    # - "8443:443"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      # - ASPNETCORE_URLS=https://+:443;http://+:80
+      - "WEBAPI_CONNECTION_STRING=Data Source=db,1433;Database=TotalMedia;Application Name=TotalMedia.WebAPI;Integrated Security=false;User ID=SA;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True"
+    restart: always
+    depends_on:
+      - db
+    networks:
+      - backend
+  webapp:
+    build:
+      context: ./totalmedia-app
+    restart: always
+    environment:
+      - API_URL=http://localhost:5000
+    ports:
+      - "8080:80"
+    depends_on:
+      - webapi
+
+volumes:
+  db-data:
+  db-logs:
+  db-secrets:
+
+
+networks:
+  backend:

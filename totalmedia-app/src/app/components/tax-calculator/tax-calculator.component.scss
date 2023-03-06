@@ -1,0 +1,36 @@
+:host {
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+}
+
+.tax-calculator-card {
+    min-width: min(600px, calc(100vw - 32px));
+}
+
+.card-header {
+    margin-bottom: 1rem;
+}
+
+.loading-spinner {
+    margin-inline: auto;
+}
+
+.tax-calculator-input-group {
+    display: block;
+}
+
+.tax-calculator-radio-group {
+    display: flex;
+    align-items: center;
+}
+
+.tax-calculator-input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.divider {
+    margin: 22px 0 28px 0;
+}

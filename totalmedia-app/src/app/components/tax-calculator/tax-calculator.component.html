@@ -1,0 +1,75 @@
+<mat-card class="tax-calculator-card">
+  <mat-card-header class="card-header"><mat-card-title>Tax Calculator</mat-card-title></mat-card-header>
+  <mat-card-content *ngIf="countries && countries.length > 0; else loading">
+    <mat-form-field class="tax-calculator-input-group" appearance="fill">
+      <mat-label>Country</mat-label>
+      <mat-select id="countrySelector" [(value)]="selectedCountry" (selectionChange)="countryChanged($event)">
+        <mat-option *ngFor="let country of countries" [value]="country">
+          {{country.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <div class="tax-calculator-radio-group" *ngIf="vats && vats.length > 0">
+      <label for="vat-radio-group" style="margin-right: 0.5rem;">VAT rate:</label>
+      <mat-radio-group id="vat-radio-group" aria-label="Select an option" (change)="selectedVatChanged($event)">
+        <mat-radio-button *ngFor="let vat of vats" [value]="vat"
+          [checked]="selectedVat === vat">{{vat}}%</mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <hr *ngIf="selectedVat" class="divider">
+    <form [formGroup]="formGroup" *ngIf="selectedVat">
+      <div class="tax-calculator-input-grid">
+        <mat-radio-button value="1" [checked]="selectedTaxCalculationStrategy == 1"
+          (change)="taxCalculationStrategyChanged($event)">Price without
+          VAT</mat-radio-button>
+        <mat-form-field>
+          <input type="number" matInput step="0.01" [(ngModel)]="priceWithoutVat" formControlName="priceWithoutVat"
+            (change)="inputChanged()" min="0">
+          <mat-error *ngIf="formGroup.hasError('required', 'priceWithoutVat')">
+            Please enter a value.
+          </mat-error>
+          <mat-error *ngIf="formGroup.hasError('min', 'priceWithoutVat')">
+            Please enter a value greater than 0.
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="tax-calculator-input-grid">
+        <mat-radio-button value="2" [checked]="selectedTaxCalculationStrategy == 2"
+          (change)="taxCalculationStrategyChanged($event)">Value-Added Tax</mat-radio-button>
+        <mat-form-field>
+          <input matInput type="number" step="0.01" [(ngModel)]="valueAddedTax" formControlName="valueAddedTax"
+            (change)="inputChanged()" min="0">
+          <mat-error *ngIf="formGroup.hasError('required', 'valueAddedTax')">
+            Please enter a value.
+          </mat-error>
+          <mat-error *ngIf="formGroup.hasError('min', 'valueAddedTax')">
+            Please enter a value greater than 0.
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="tax-calculator-input-grid">
+        <mat-radio-button value="3" [checked]="selectedTaxCalculationStrategy == 3"
+          (change)="taxCalculationStrategyChanged($event)">Price incl.
+          VAT</mat-radio-button>
+        <mat-form-field>
+          <input matInput type="number" step="0.01" [(ngModel)]="priceInclVat" formControlName="priceInclVat"
+            (change)="inputChanged()" min="0">
+          <mat-error *ngIf="formGroup.hasError('required', 'priceInclVat')">
+            Please enter a value.
+          </mat-error>
+          <mat-error *ngIf="formGroup.hasError('min', 'priceInclVat')">
+            Please enter a value greater than 0.
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </form>
+
+
+  </mat-card-content>
+</mat-card>
+
+<ng-template #loading>
+  <mat-card-content>
+    <mat-progress-spinner class="loading-spinner" mode="indeterminate"></mat-progress-spinner>
+  </mat-card-content>
+</ng-template>
